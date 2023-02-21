@@ -1,4 +1,5 @@
 import XCTest
+import CustomDump
 @testable import KaleidoscopeLib
 
 final class ParserTests: XCTestCase {
@@ -212,21 +213,21 @@ final class ParserTests: XCTestCase {
         XCTAssert(program.onlyContains(expressions: expected))
     }
 
-//    func testBinaryExpressionSequence() throws {
-//        let tokens: [Token] = [
-//            .number(3), .operator(.modulo), .number(2), .operator(.plus), .number(1)
-//        ]
-//        let program = try programParser.parse(tokens)
-//
-//        let expected: [Expression] = [
-//            .binary(
-//                lhs: .number(3),
-//                operator: .modulo,
-//                rhs: .binary(lhs: .number(2), operator: .plus, rhs: .number(1))
-//            )
-//        ]
-//        XCTAssert(program.onlyContains(expressions: expected))
-//    }
+    func testBinaryExpressionSequence() throws {
+        let tokens: [Token] = [
+            .number(3), .operator(.modulo), .number(2), .operator(.plus), .number(1)
+        ]
+        let program = try programParser.parse(tokens)
+
+        let expected: [Expression] = [
+            .binary(
+                lhs: .number(3),
+                operator: .modulo,
+                rhs: .binary(lhs: .number(2), operator: .plus, rhs: .number(1))
+            )
+        ]
+        XCTAssert(program.onlyContains(expressions: expected))
+    }
 
     func testUnbalancedBinaryExpression() {
         let tokens: [Token] = [
@@ -321,7 +322,8 @@ final class ParserTests: XCTestCase {
                 )
             )
         ]
-        XCTAssert(program.onlyContains(expressions: expected))
+        
+        XCTAssertNoDifference(program, Program(expressions: expected))
     }
 
     func testExternalFunctionWithoutParameters() throws {

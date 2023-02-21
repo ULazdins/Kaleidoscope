@@ -67,25 +67,10 @@
             </BuildableReference>
             <SkippedTests>
                <Test
+                  Identifier = "ParserTests/testBinaryExpressionSequence()">
+               </Test>
+               <Test
                   Identifier = "ParserTests/testComplexExpression()">
-               </Test>
-               <Test
-                  Identifier = "ParserTests/testExternalFunctionWithParameters()">
-               </Test>
-               <Test
-                  Identifier = "ParserTests/testExternalFunctionWithoutParameters()">
-               </Test>
-               <Test
-                  Identifier = "ParserTests/testFunctionDefinitionWithParameters()">
-               </Test>
-               <Test
-                  Identifier = "ParserTests/testFunctionDefinitionWithoutParameters()">
-               </Test>
-               <Test
-                  Identifier = "ParserTests/testMultipleExternalFunctions()">
-               </Test>
-               <Test
-                  Identifier = "ParserTests/testMultipleFunctionDefinitions()">
                </Test>
             </SkippedTests>
          </TestableReference>

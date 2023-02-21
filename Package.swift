@@ -14,6 +14,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-parsing", from: "0.7.0"),
+        .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "0.3.0"),
     ],
     targets: [
         .target(
@@ -26,7 +27,10 @@ let package = Package(
         ),
         .testTarget(
             name: "KaleidoscopeLibTests",
-            dependencies: ["KaleidoscopeLib"]
+            dependencies: [
+                "KaleidoscopeLib",
+                .product(name: "CustomDump", package: "swift-custom-dump")
+            ]
         ),
     ]
 )

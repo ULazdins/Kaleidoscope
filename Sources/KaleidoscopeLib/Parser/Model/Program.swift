@@ -26,3 +26,13 @@ extension Program: Equatable { }
 extension Prototype: Equatable { }
 extension Function: Equatable { }
 extension Expression: Equatable { }
+
+extension Program {
+    func merge(with other: Program) -> Program {
+        Program(
+            externals: self.externals + other.externals,
+            functions: self.functions + other.functions,
+            expressions: self.expressions + other.expressions
+        )
+    }
+}

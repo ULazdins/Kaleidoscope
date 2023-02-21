@@ -1,6 +1,6 @@
 import Parsing
 
-private func getExpressionParser() -> AnyParser<[Token], [Expression]> {
+private func getExpressionParser() -> AnyParser<[Token], Expression> {
     var expression: AnyParser<[Token], Expression>!
     
     let parenthesizedExpressionParser = Parse {
@@ -54,7 +54,6 @@ private func getExpressionParser() -> AnyParser<[Token], [Expression]> {
         callExpressionParser
         variableParser
         Fail<[Token], Expression>()
-        // variable, identifier
     }.eraseToAnyParser()
     
     let binaryExpression = Parse {
@@ -65,14 +64,9 @@ private func getExpressionParser() -> AnyParser<[Token], [Expression]> {
         Expression.binary(lhs: lhs, operator: operation, rhs: rhs)
     }.eraseToAnyParser()
     
-    return Parse {
-        Many {
-            OneOf {
-                binaryExpression
-                expression!
-            }
-        }
-        End<[Token]>()
+    return OneOf {
+        binaryExpression
+        expression!
     }.eraseToAnyParser()
 }
 
