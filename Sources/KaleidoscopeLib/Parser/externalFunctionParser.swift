@@ -1,7 +1,7 @@
 import Parsing
 
 let externalFunctionParser = Parse {
-    MatchToken(comparingTo: .keyword(.external))
+    Token.keyword(.external)
     prototypeParser
-    MatchToken(comparingTo: .symbol(.semicolon))
+    Token.symbol(.semicolon)
 }

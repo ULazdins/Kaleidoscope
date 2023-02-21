@@ -12,18 +12,6 @@ final class ParserTests: XCTestCase {
         XCTAssert(program.expressions.isEmpty)
     }
     
-//    func testLexerError() {
-//        let tokens: [Token] = [nil]
-//        let parser = Parser(tokens: tokens)
-//
-//        do {
-//            _ = try programParser.parse(tokens)
-//            XCTFail("Expected an error to be thrown.")
-//        } catch {
-//            XCTAssertTrue(error is LexerMock.Error)
-//        }
-//    }
-//
     func testNumberExpression() throws {
         let tokens: [Token] = [.number(5)]
         let program = try programParser.parse(tokens)
@@ -226,7 +214,7 @@ final class ParserTests: XCTestCase {
                 rhs: .binary(lhs: .number(2), operator: .plus, rhs: .number(1))
             )
         ]
-        XCTAssert(program.onlyContains(expressions: expected))
+        XCTAssertNoDifference(program, Program(expressions: expected))
     }
 
     func testUnbalancedBinaryExpression() {

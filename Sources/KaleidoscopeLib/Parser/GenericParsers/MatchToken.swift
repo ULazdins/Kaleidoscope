@@ -19,11 +19,3 @@ struct MatchToken<T>: Parser {
         return match
     }
 }
-
-extension MatchToken where T == Void {
-    init(comparingTo other: Token) {
-        self.init { token in
-            return token == other ? Void() : nil
-        }
-    }
-}

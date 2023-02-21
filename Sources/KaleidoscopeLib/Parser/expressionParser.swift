@@ -1,55 +1,26 @@
 import Parsing
 
-private func getExpressionParser() -> AnyParser<[Token], Expression> {
-    var expression: AnyParser<[Token], Expression>!
-    
-    let parenthesizedExpressionParser = Parse {
-        MatchToken(comparingTo: .symbol(.leftParenthesis))
-        Lazy { expression! }
-        MatchToken(comparingTo: .symbol(.rightParenthesis))
+struct ExpressionOrBinaryExpression: Parser {
+    enum Errors: Error {
+        case noMatch
     }
     
-    let ifThenElseParser = Parse {
-        MatchToken(comparingTo: .keyword(.if))
-        Lazy { expression! }
-        MatchToken(comparingTo: .keyword(.then))
-        Lazy { expression! }
-        MatchToken(comparingTo: .keyword(.else))
-        Lazy { expression! }
-    }.map({ (condition, thenExpression, elseExpression) in
-        return Expression.if(condition: condition, then: thenExpression, else: elseExpression)
-    })
+    func parse(_ input: inout [Token]) throws -> Expression {
+        var mutable = input
+        
+        let expression = try plainExpressionParser.parse(&mutable)
+        
+        guard let `operator` = try? operatorParser.parse(&mutable) else {
+            input = mutable
+            return expression
+        }
+        
+        let expression2 = try self.parse(&mutable)
+        
+        input = mutable
+        return .binary(lhs: expression, operator: `operator`, rhs: expression2)
+    }
     
-    let callExpressionParser: AnyParser<[Token], Expression> = Parse {
-        identifierParser
-        getTupleParser(parser: Lazy { expression! })
-    }.map { (identifier, expressions) in
-        Expression.call(identifier, arguments: expressions)
-    }.eraseToAnyParser()
-
-    expression = OneOf {
-        parenthesizedExpressionParser
-        numberParser.map(Expression.number)
-        ifThenElseParser
-        callExpressionParser
-        variableParser
-    }.eraseToAnyParser()
-    
-    let binaryExpression = Parse {
-        expression!
-        MatchToken<Operator>(map: { token in
-            guard case let .operator(`operator`) = token else { return nil }
-            return `operator`
-        })
-        expression!
-    }.map { (lhs, operation, rhs) in
-        Expression.binary(lhs: lhs, operator: operation, rhs: rhs)
-    }.eraseToAnyParser()
-    
-    return OneOf {
-        binaryExpression
-        expression!
-    }.eraseToAnyParser()
 }
 
-let expressionParser = getExpressionParser()
+let expressionParser = ExpressionOrBinaryExpression()
