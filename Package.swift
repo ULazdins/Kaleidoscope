@@ -5,20 +5,20 @@ import PackageDescription
 
 let package = Package(
     name: "Kaleidoscope",
+    platforms: [
+        .macOS(.v10_15),
+        .iOS(.v15)
+    ],
     products: [
-        // Products define the executables and libraries a package produces, and make them visible to other packages.
-        .library(
-            name: "Kaleidoscope",
-            targets: ["Kaleidoscope"]),
+        .library(name: "Kaleidoscope", targets: ["Kaleidoscope"]),
     ],
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
+        .package(url: "https://github.com/pointfreeco/swift-parsing", from: "0.7.0"),
     ],
     targets: [
         .target(
             name: "KaleidoscopeLib",
-            dependencies: []
+            dependencies: [.product(name: "Parsing", package: "swift-parsing")]
         ),
         .target(
             name: "Kaleidoscope",
@@ -26,6 +26,7 @@ let package = Package(
         ),
         .testTarget(
             name: "KaleidoscopeLibTests",
-            dependencies: ["KaleidoscopeLib"]),
+            dependencies: ["KaleidoscopeLib"]
+        ),
     ]
 )
