@@ -4,11 +4,9 @@ func getTupleParser<T>(parser: some Parser<[Token], T>) -> AnyParser<[Token], [T
     Parse {
         MatchToken(comparingTo: .symbol(.leftParenthesis))
         Many(
-            into: [T](),
-            { accumulator, nextFragment in accumulator = accumulator + [nextFragment] },
             element: { parser },
-            separator: { MatchToken(comparingTo: .symbol(.comma)) }
+            separator: { MatchToken(comparingTo: .symbol(.comma)) },
+            terminator: { MatchToken(comparingTo: .symbol(.rightParenthesis)) }
         )
-        MatchToken(comparingTo: .symbol(.rightParenthesis))
     }.eraseToAnyParser()
 }

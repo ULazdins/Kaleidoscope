@@ -44,12 +44,16 @@ private func getExpressionParser() -> AnyParser<[Token], [Expression]> {
             return `operator`
         }
     }
+    
+    let variableParser = identifierParser.map(Expression.variable)
 
     expression = OneOf {
         parenthesizedExpressionParser
         numberParser.map(Expression.number)
         ifThenElseParser
         callExpressionParser
+        variableParser
+        Fail<[Token], Expression>()
         // variable, identifier
     }.eraseToAnyParser()
     
@@ -61,11 +65,14 @@ private func getExpressionParser() -> AnyParser<[Token], [Expression]> {
         Expression.binary(lhs: lhs, operator: operation, rhs: rhs)
     }.eraseToAnyParser()
     
-    return Many {
-        OneOf {
-            binaryExpression
-            expression!
+    return Parse {
+        Many {
+            OneOf {
+                binaryExpression
+                expression!
+            }
         }
+        End<[Token]>()
     }.eraseToAnyParser()
 }
 
