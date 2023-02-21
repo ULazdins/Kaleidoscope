@@ -26,26 +26,6 @@ private func getExpressionParser() -> AnyParser<[Token], Expression> {
     }.map { (identifier, expressions) in
         Expression.call(identifier, arguments: expressions)
     }.eraseToAnyParser()
-    
-    struct OperatorMatchParser: Parser {
-        enum No: Error {
-            case yolo
-        }
-        
-        func parse(_ input: inout [Token]) throws -> Operator {
-            guard
-                let first = input.first,
-                case let .operator(`operator`) = first
-            else {
-                throw No.yolo
-            }
-            
-            input = Array(input.dropFirst())
-            return `operator`
-        }
-    }
-    
-    let variableParser = identifierParser.map(Expression.variable)
 
     expression = OneOf {
         parenthesizedExpressionParser
@@ -53,12 +33,14 @@ private func getExpressionParser() -> AnyParser<[Token], Expression> {
         ifThenElseParser
         callExpressionParser
         variableParser
-        Fail<[Token], Expression>()
     }.eraseToAnyParser()
     
     let binaryExpression = Parse {
         expression!
-        OperatorMatchParser()
+        MatchToken<Operator>(map: { token in
+            guard case let .operator(`operator`) = token else { return nil }
+            return `operator`
+        })
         expression!
     }.map { (lhs, operation, rhs) in
         Expression.binary(lhs: lhs, operator: operation, rhs: rhs)
